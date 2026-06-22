@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { TrendingUp, TrendingDown, BarChart2, Shield, Zap, Globe, ChevronRight, ArrowUpRight, Menu, X } from "lucide-react";
 
@@ -179,26 +178,19 @@ function GlassCard({ children, style = {}, delay = 0 }) {
   );
 }
 
-// ── நான்கு nav items — AppRoutes-ல உள்ள paths-க்கு map பண்ணியிருக்கேன்
-const navLinks = [
-  { label: "Markets",   path: "/dashboard" },
-  { label: "Portfolio", path: "/portfolio"  },
-  { label: "Orders",    path: "/orders"     },
-  { label: "Analytics", path: "/dashboard"  },
-  { label: "Contact",   path: "/contact"    },
-];
+const navLinks = ["Markets", "Portfolio", "Orders", "Analytics", "Contact"];
 
 function Navbar() {
-  const navigate = useNavigate(); // ✅ useNavigate add பண்ணியிருக்கேன்
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  // 1024 breakpoint — phone la hamburger show aagum
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) setMenuOpen(false);
+      setIsMobile(window.innerWidth < 1024);
+      if (window.innerWidth >= 1024) setMenuOpen(false);
     };
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("resize", handleResize);
@@ -229,11 +221,8 @@ function Navbar() {
           transition: "all 0.4s ease",
         }}
       >
-        {/* LOGO */}
-        <div
-          onClick={() => { window.location.href = "/"; }}
-          style={{ display: "flex", alignItems: "center", gap: "10px", zIndex: 101, cursor: "pointer" }}
-        >
+        {/* Logo */}
+        <a href="/" style={{ display: "flex", alignItems: "center", gap: "10px", zIndex: 101, textDecoration: "none" }}>
           <div style={{
             width: 32, height: 32,
             background: "linear-gradient(135deg, #00FF88, #00CC66)",
@@ -248,25 +237,22 @@ function Navbar() {
           }}>
             Stackly
           </span>
-        </div>
+        </a>
 
-        {/* Desktop Links — ✅ href="#" நீக்கி onClick navigate பண்ணியிருக்கேன் */}
+        {/* Desktop Links */}
         {!isMobile && (
           <div style={{ display: "flex", gap: "36px" }}>
             {navLinks.map((item) => (
-              <span
-                key={item.label}
-                onClick={() => navigate(item.path)}
-                style={{
-                  fontFamily: "Outfit, sans-serif", fontSize: "14px",
-                  color: "rgba(232,245,232,0.55)", textDecoration: "none",
-                  letterSpacing: "0.02em", transition: "color 0.2s", cursor: "pointer",
-                }}
+              <a key={item} href="#" style={{
+                fontFamily: "Outfit, sans-serif", fontSize: "14px",
+                color: "rgba(232,245,232,0.55)", textDecoration: "none",
+                letterSpacing: "0.02em", transition: "color 0.2s",
+              }}
                 onMouseEnter={e => e.target.style.color = "#00FF88"}
                 onMouseLeave={e => e.target.style.color = "rgba(232,245,232,0.55)"}
               >
-                {item.label}
-              </span>
+                {item}
+              </a>
             ))}
           </div>
         )}
@@ -274,22 +260,18 @@ function Navbar() {
         {/* Desktop Buttons */}
         {!isMobile && (
           <div style={{ display: "flex", gap: "12px" }}>
-            <button
-              onClick={() => navigate("/login")}
-              style={{
-                fontFamily: "Outfit, sans-serif", fontSize: "13px",
-                color: "#00FF88", background: "transparent",
-                border: "1px solid rgba(0,255,136,0.3)",
-                padding: "8px 20px", borderRadius: "6px", cursor: "pointer",
-              }}>Login</button>
-            <button
-              onClick={() => navigate("/login")}
-              style={{
-                fontFamily: "Outfit, sans-serif", fontSize: "13px",
-                color: "#050A05", background: "#00FF88",
-                border: "none", padding: "8px 20px",
-                borderRadius: "6px", cursor: "pointer", fontWeight: 600,
-              }}>Get Started</button>
+            <button style={{
+              fontFamily: "Outfit, sans-serif", fontSize: "13px",
+              color: "#00FF88", background: "transparent",
+              border: "1px solid rgba(0,255,136,0.3)",
+              padding: "8px 20px", borderRadius: "6px", cursor: "pointer",
+            }}>Login</button>
+            <button style={{
+              fontFamily: "Outfit, sans-serif", fontSize: "13px",
+              color: "#050A05", background: "#00FF88",
+              border: "none", padding: "8px 20px",
+              borderRadius: "6px", cursor: "pointer", fontWeight: 600,
+            }}>Get Started</button>
           </div>
         )}
 
@@ -308,7 +290,7 @@ function Navbar() {
         )}
       </motion.nav>
 
-      {/* Mobile Drawer — ✅ href="#" நீக்கி onClick navigate பண்ணியிருக்கேன் */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -330,15 +312,15 @@ function Navbar() {
           >
             <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
               {navLinks.map((item, i) => (
-                <motion.div
-                  key={item.label}
+                <motion.a
+                  key={item} href="#"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.05 * i + 0.1 }}
-                  onClick={() => { navigate(item.path); setMenuOpen(false); }}
+                  onClick={() => setMenuOpen(false)}
                   style={{
                     fontFamily: "Outfit, sans-serif", fontSize: "22px", fontWeight: 600,
-                    color: "rgba(232,245,232,0.7)", textDecoration: "none", cursor: "pointer",
+                    color: "rgba(232,245,232,0.7)", textDecoration: "none",
                     padding: "14px 0", borderBottom: "1px solid rgba(0,255,136,0.07)",
                     display: "flex", alignItems: "center", justifyContent: "space-between",
                     transition: "color 0.2s",
@@ -346,9 +328,9 @@ function Navbar() {
                   onMouseEnter={e => e.currentTarget.style.color = "#00FF88"}
                   onMouseLeave={e => e.currentTarget.style.color = "rgba(232,245,232,0.7)"}
                 >
-                  {item.label}
+                  {item}
                   <ChevronRight size={16} color="rgba(0,255,136,0.4)" />
-                </motion.div>
+                </motion.a>
               ))}
             </div>
 
@@ -357,22 +339,18 @@ function Navbar() {
               transition={{ delay: 0.35 }}
               style={{ display: "flex", flexDirection: "column", gap: "12px" }}
             >
-              <button
-                onClick={() => { navigate("/login"); setMenuOpen(false); }}
-                style={{
-                  fontFamily: "Outfit, sans-serif", fontSize: "15px",
-                  color: "#050A05", background: "#00FF88",
-                  border: "none", padding: "16px", borderRadius: "8px",
-                  cursor: "pointer", fontWeight: 700,
-                }}>Get Started Free</button>
-              <button
-                onClick={() => { navigate("/login"); setMenuOpen(false); }}
-                style={{
-                  fontFamily: "Outfit, sans-serif", fontSize: "15px",
-                  color: "#00FF88", background: "transparent",
-                  border: "1px solid rgba(0,255,136,0.3)",
-                  padding: "14px", borderRadius: "8px", cursor: "pointer",
-                }}>Login</button>
+              <button style={{
+                fontFamily: "Outfit, sans-serif", fontSize: "15px",
+                color: "#050A05", background: "#00FF88",
+                border: "none", padding: "16px", borderRadius: "8px",
+                cursor: "pointer", fontWeight: 700,
+              }}>Get Started Free</button>
+              <button style={{
+                fontFamily: "Outfit, sans-serif", fontSize: "15px",
+                color: "#00FF88", background: "transparent",
+                border: "1px solid rgba(0,255,136,0.3)",
+                padding: "14px", borderRadius: "8px", cursor: "pointer",
+              }}>Login</button>
             </motion.div>
 
             <div style={{
@@ -420,10 +398,9 @@ const features = [
 ];
 
 export default function LandingPage() {
-  const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   useEffect(() => {
-    const h = () => setIsMobile(window.innerWidth < 768);
+    const h = () => setIsMobile(window.innerWidth < 1024);
     window.addEventListener("resize", h);
     return () => window.removeEventListener("resize", h);
   }, []);
@@ -445,12 +422,12 @@ export default function LandingPage() {
 
       <Navbar />
 
-      {/* HERO */}
+      {/* ══ HERO ══ */}
       <section style={{
         minHeight: "100vh", display: "flex", flexDirection: "column",
         justifyContent: "center",
         padding: isMobile ? "0 20px" : "0 48px",
-        paddingTop: isMobile ? "100px" : "80px", position: "relative", zIndex: 5,
+        paddingTop: "80px", position: "relative", zIndex: 5,
         maxWidth: "1280px", margin: "0 auto",
       }}>
         <div style={{
@@ -518,7 +495,6 @@ export default function LandingPage() {
               <motion.button
                 whileHover={{ scale: 1.04, boxShadow: "0 0 30px rgba(0,255,136,0.35)" }}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => navigate("/login")}
                 style={{
                   background: "#00FF88", color: "#050A05", border: "none",
                   padding: "15px 28px", borderRadius: "8px", fontSize: "15px",
@@ -530,7 +506,6 @@ export default function LandingPage() {
               </motion.button>
               <motion.button
                 whileHover={{ borderColor: "rgba(0,255,136,0.5)", color: "#00FF88" }}
-                onClick={() => navigate("/dashboard")}
                 style={{
                   background: "transparent", color: "rgba(232,245,232,0.6)",
                   border: "1px solid rgba(232,245,232,0.15)", padding: "15px 24px",
@@ -620,7 +595,7 @@ export default function LandingPage() {
         <LiveTicker />
       </div>
 
-      {/* STATS */}
+      {/* ══ STATS ══ */}
       <section style={{
         position: "relative", zIndex: 5,
         padding: isMobile ? "60px 20px" : "80px 48px",
@@ -651,7 +626,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FEATURES */}
+      {/* ══ FEATURES ══ */}
       <section style={{
         position: "relative", zIndex: 5,
         padding: isMobile ? "0 20px 80px" : "0 48px 100px",
@@ -710,7 +685,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* IMAGE STRIP */}
+      {/* ══ IMAGE STRIP ══ */}
       <section style={{
         position: "relative", zIndex: 5,
         padding: isMobile ? "0 20px 80px" : "0 48px 100px",
@@ -752,7 +727,6 @@ export default function LandingPage() {
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(0,255,136,0.4)" }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => navigate("/login")}
               style={{
                 background: "#00FF88", color: "#050A05", border: "none",
                 padding: "14px 36px", borderRadius: "8px", fontSize: "15px",
@@ -763,174 +737,32 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* FOOTER */}
+      {/* ══ FOOTER ══ */}
       <footer style={{
         position: "relative", zIndex: 5,
         borderTop: "1px solid rgba(0,255,136,0.08)",
-        padding: isMobile ? "48px 20px 32px" : "64px 48px 40px",
-        maxWidth: "1280px", margin: "0 auto",
+        padding: isMobile ? "32px 20px" : "40px 48px",
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row",
+        justifyContent: "space-between",
+        alignItems: isMobile ? "flex-start" : "center",
+        gap: "16px", maxWidth: "1280px", margin: "0 auto",
       }}>
-        {/* Top grid */}
         <div style={{
-          display: "grid",
-          gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr 1fr 1fr",
-          gap: isMobile ? "40px" : "48px",
-          marginBottom: "48px",
+          fontFamily: "JetBrains Mono, monospace", fontSize: "12px",
+          color: "rgba(232,245,232,0.25)",
         }}>
-          {/* Brand */}
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-              <div style={{
-                width: 32, height: 32,
-                background: "linear-gradient(135deg, #00FF88, #00CC66)",
-                borderRadius: "6px",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <BarChart2 size={18} color="#050A05" strokeWidth={2.5} />
-              </div>
-              <span style={{
-                fontFamily: "Outfit, sans-serif", fontSize: "18px",
-                fontWeight: 700, color: "#e8f5e8",
-              }}>Stackly</span>
-            </div>
-            <p style={{
-              fontSize: "13px", color: "rgba(232,245,232,0.4)",
-              lineHeight: 1.7, maxWidth: "260px", margin: "0 0 20px 0",
-            }}>
-              Institutional-grade trading for everyone. NSE · BSE · Global markets in one terminal.
-            </p>
-            {/* Address */}
-            <div style={{
-              fontFamily: "JetBrains Mono, monospace", fontSize: "11px",
-              color: "rgba(232,245,232,0.3)", lineHeight: 1.8,
-            }}>
-              <div>MMR Complex, Chinna Thirupathi,</div>
-              <div>Near Chinna Muniyappan Kovil,</div>
-              <div>Salem, Tamil Nadu – 636008</div>
-              <div style={{ marginTop: "8px", color: "rgba(0,255,136,0.5)" }}>📞 +91 80 4567 8900</div>
-              <div style={{ color: "rgba(0,255,136,0.5)" }}>✉ support@stackly.in</div>
-            </div>
-          </div>
-
-          {/* Products */}
-          <div>
-            <div style={{
-              fontFamily: "JetBrains Mono, monospace", fontSize: "10px",
-              color: "rgba(0,255,136,0.5)", letterSpacing: "0.12em",
-              textTransform: "uppercase", marginBottom: "16px",
-            }}>Platform</div>
-            {["Markets", "Portfolio", "Orders", "Analytics", "Live Demo"].map((item) => (
-              <div key={item} style={{
-                fontSize: "13px", color: "rgba(232,245,232,0.45)",
-                marginBottom: "10px", cursor: "pointer", transition: "color 0.2s",
-              }}
-                onMouseEnter={e => e.target.style.color = "#00FF88"}
-                onMouseLeave={e => e.target.style.color = "rgba(232,245,232,0.45)"}
-              >{item}</div>
-            ))}
-          </div>
-
-          {/* Company */}
-          <div>
-            <div style={{
-              fontFamily: "JetBrains Mono, monospace", fontSize: "10px",
-              color: "rgba(0,255,136,0.5)", letterSpacing: "0.12em",
-              textTransform: "uppercase", marginBottom: "16px",
-            }}>Company</div>
-            {["About Us", "Careers", "Press", "Contact", "Blog"].map((item) => (
-              <div key={item} style={{
-                fontSize: "13px", color: "rgba(232,245,232,0.45)",
-                marginBottom: "10px", cursor: "pointer", transition: "color 0.2s",
-              }}
-                onMouseEnter={e => e.target.style.color = "#00FF88"}
-                onMouseLeave={e => e.target.style.color = "rgba(232,245,232,0.45)"}
-              >{item}</div>
-            ))}
-          </div>
-
-          {/* Legal + Social */}
-          <div>
-            <div style={{
-              fontFamily: "JetBrains Mono, monospace", fontSize: "10px",
-              color: "rgba(0,255,136,0.5)", letterSpacing: "0.12em",
-              textTransform: "uppercase", marginBottom: "16px",
-            }}>Legal</div>
-            {["Privacy Policy", "Terms of Service", "Risk Disclosure", "Grievance"].map((item) => (
-              <div key={item} style={{
-                fontSize: "13px", color: "rgba(232,245,232,0.45)",
-                marginBottom: "10px", cursor: "pointer", transition: "color 0.2s",
-              }}
-                onMouseEnter={e => e.target.style.color = "#00FF88"}
-                onMouseLeave={e => e.target.style.color = "rgba(232,245,232,0.45)"}
-              >{item}</div>
-            ))}
-
-            {/* Social Icons */}
-            <div style={{
-              fontFamily: "JetBrains Mono, monospace", fontSize: "10px",
-              color: "rgba(0,255,136,0.5)", letterSpacing: "0.12em",
-              textTransform: "uppercase", marginBottom: "12px", marginTop: "24px",
-            }}>Follow Us</div>
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              {[
-                { icon: "𝕏", label: "Twitter" },
-                { icon: "in", label: "LinkedIn" },
-                { icon: "▶", label: "YouTube" },
-                { icon: "📷", label: "Instagram" },
-              ].map((s) => (
-                <button
-                  key={s.label}
-                  onClick={() => navigate("/404")}
-                  title={s.label}
-                  style={{
-                    width: 36, height: 36,
-                    background: "rgba(0,255,136,0.06)",
-                    border: "1px solid rgba(0,255,136,0.15)",
-                    borderRadius: "8px", cursor: "pointer",
-                    color: "#e8f5e8", fontSize: "14px",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    transition: "all 0.2s",
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = "rgba(0,255,136,0.15)";
-                    e.currentTarget.style.borderColor = "rgba(0,255,136,0.4)";
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = "rgba(0,255,136,0.06)";
-                    e.currentTarget.style.borderColor = "rgba(0,255,136,0.15)";
-                  }}
-                >{s.icon}</button>
-              ))}
-            </div>
-          </div>
+          © 2025 Stackly Technologies Pvt. Ltd. · SEBI Reg: INZ000XXXXXX
         </div>
-
-        {/* Bottom bar */}
         <div style={{
-          borderTop: "1px solid rgba(0,255,136,0.06)",
-          paddingTop: "24px",
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          justifyContent: "space-between",
-          alignItems: isMobile ? "flex-start" : "center",
-          gap: "12px",
+          fontFamily: "JetBrains Mono, monospace", fontSize: "12px",
+          color: "rgba(0,255,136,0.4)", display: "flex", alignItems: "center", gap: "6px",
         }}>
-          <div style={{
-            fontFamily: "JetBrains Mono, monospace", fontSize: "11px",
-            color: "rgba(232,245,232,0.2)",
-          }}>
-            © 2025 Stackly Technologies Pvt. Ltd. · SEBI Reg: INZ000XXXXXX · CIN: U74999KA2024PTC000000
-          </div>
-          <div style={{
-            fontFamily: "JetBrains Mono, monospace", fontSize: "11px",
-            color: "rgba(0,255,136,0.4)", display: "flex", alignItems: "center", gap: "6px",
-          }}>
-            <span style={{
-              width: 6, height: 6, borderRadius: "50%",
-              background: "#00FF88", boxShadow: "0 0 6px #00FF88",
-            }} />
-            All systems operational
-          </div>
+          <span style={{
+            width: 6, height: 6, borderRadius: "50%",
+            background: "#00FF88", boxShadow: "0 0 6px #00FF88",
+          }} />
+          All systems operational
         </div>
       </footer>
 
